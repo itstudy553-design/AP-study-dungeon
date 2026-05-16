@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>APローグ v4 - 合格支援アプリ版</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="app" class="app">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">応用情報技術者試験 学習ローグライクRPG</p>
+        <h1>APローグ <span>v4</span></h1>
+      </div>
+      <button id="soundToggle" class="icon-btn" type="button" aria-label="効果音切替">🔈</button>
+    </header>
+
+    <main>
+      <section id="homeScreen" class="screen active">
+        <div class="hero-card">
+          <div class="hero-copy">
+            <p class="badge">v4 / 合格支援アプリ版</p>
+            <h2>遊ぶ。復習する。模試で測る。合格ルートを育てる。</h2>
+            <p>v3のローグ探索・午後事件クエストに、学習カレンダー、模擬試験、合格可能性スコア、問題エディタ、称号を追加しました。</p>
+            <div class="hero-actions">
+              <button class="primary-btn" id="startDungeonBtn" type="button">ローグ探索</button>
+              <button class="primary-btn purple" id="caseQuestBtn" type="button">午後事件クエスト</button>
+            </div>
+          </div>
+          <div class="hero-monsters" aria-hidden="true">
+            <img src="assets/monsters/audit_specter.png" alt="" />
+            <img src="assets/monsters/critical_path_worm.png" alt="" />
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card"><span>プレイヤーLv</span><strong id="homeLevel">1</strong></div>
+          <div class="stat-card"><span>総正答率</span><strong id="homeAccuracy">0%</strong></div>
+          <div class="stat-card"><span>合格可能性</span><strong id="homePassScore">0%</strong></div>
+          <div class="stat-card"><span>連続学習</span><strong id="homeStreak">0日</strong></div>
+        </div>
+
+        <section class="panel pass-panel">
+          <div class="mini-head">
+            <div>
+              <p class="eyebrow">今日のおすすめ</p>
+              <h3 id="recommendTitle">まずは10問探索</h3>
+            </div>
+            <strong id="recommendBadge" class="pill">READY</strong>
+          </div>
+          <p id="recommendText" class="muted">学習データが増えるほど、おすすめが賢くなります。</p>
+          <div class="quick-grid">
+            <button class="secondary-btn" id="reviewBtn" type="button">因縁モンスター再戦</button>
+            <button class="secondary-btn" id="mockBtn" type="button">ミニ模試</button>
+            <button class="secondary-btn" id="editorBtn" type="button">問題エディタ</button>
+            <button class="secondary-btn" id="calendarBtn" type="button">学習カレンダー</button>
+          </div>
+        </section>
+
+        <section class="panel compact-panel">
+          <div class="mini-head"><h3>最近獲得した称号</h3><span id="titleCount" class="muted">0個</span></div>
+          <div id="recentTitles" class="title-row"></div>
+        </section>
+      </section>
+
+      <section id="dungeonScreen" class="screen">
+        <div class="section-head">
+          <button class="ghost-btn" data-action="home" type="button">← ホーム</button>
+          <div><p class="eyebrow">ランダム探索</p><h2>ローグ探索</h2></div>
+        </div>
+        <div id="dungeonList" class="dungeon-list"></div>
+      </section>
+
+      <section id="mapScreen" class="screen">
+        <div class="section-head">
+          <button class="ghost-btn" data-action="home" type="button">← 撤退</button>
+          <div><p id="mapDungeonName" class="eyebrow">ダンジョン</p><h2>探索マップ</h2></div>
+        </div>
+        <div class="run-status-card">
+          <div><span>階層</span><strong id="mapFloor">1/7</strong></div>
+          <div><span>HP</span><strong id="mapHp">100/100</strong></div>
+          <div><span>正答</span><strong id="mapCorrect">0問</strong></div>
+        </div>
+        <section class="panel compact-panel">
+          <div class="mini-head"><h3>所持カード</h3><span id="cardCountText" class="muted">0枚</span></div>
+          <div id="activeCards" class="active-cards"></div>
+        </section>
+        <section class="panel">
+          <div class="mini-head"><h3>次の部屋</h3><span id="mapHint" class="muted">部屋効果を見て選ぼう</span></div>
+          <div id="roomOptions" class="room-options"></div>
+        </section>
+      </section>
+
+      <section id="battleScreen" class="screen battle-screen">
+        <div class="battle-status">
+          <div><p id="dungeonName" class="eyebrow">ダンジョン</p><h2 id="battleTitle">バトル</h2></div>
+          <div class="question-count"><span id="battleProgress">1/1</span></div>
+        </div>
+        <div class="room-banner" id="roomBanner">通常問題部屋</div>
+        <div class="hp-row">
+          <div class="hp-box"><div class="hp-label"><span>あなた</span><span id="playerHpText">100/100</span></div><div class="hp-bar"><i id="playerHpBar"></i></div></div>
+          <div class="hp-box"><div class="hp-label"><span id="enemyNameHp">敵</span><span id="enemyHpText">100/100</span></div><div class="hp-bar enemy"><i id="enemyHpBar"></i></div></div>
+        </div>
+        <div class="monster-stage">
+          <div class="monster-card"><img id="enemyImage" src="assets/monsters/sql_slime.png" alt="敵モンスター" /><div id="damagePop" class="damage-pop" aria-hidden="true"></div></div>
+          <div class="battle-side"><div class="battle-log" id="battleLog">問題に答えて攻撃しよう。</div><div id="battleCards" class="battle-cards"></div></div>
+        </div>
+        <article class="question-card">
+          <div class="question-meta"><span id="questionCategory">セキュリティ</span><span id="questionDifficulty">基本</span><span id="rivalBadge" class="rival-badge hidden">因縁</span></div>
+          <h3 id="questionText">問題文</h3>
+          <p id="hintText" class="hint-text"></p>
+          <div id="choices" class="choices"></div>
+        </article>
+      </section>
+
+      <section id="caseListScreen" class="screen">
+        <div class="section-head">
+          <button class="ghost-btn" data-action="home" type="button">← ホーム</button>
+          <div><p class="eyebrow">午後問題風</p><h2>事件クエスト</h2></div>
+        </div>
+        <div id="caseList" class="dungeon-list case-list"></div>
+      </section>
+
+      <section id="caseScreen" class="screen">
+        <div class="section-head">
+          <button class="ghost-btn" data-action="caseList" type="button">← クエスト一覧</button>
+          <div><p id="caseCategory" class="eyebrow">ケース</p><h2 id="caseTitle">事件名</h2></div>
+        </div>
+        <div class="case-layout">
+          <aside class="case-visual panel">
+            <img id="caseMonster" src="assets/monsters/audit_specter.png" alt="ボスモンスター" />
+            <div class="case-hp"><span>調査HP</span><strong id="caseHpText">100/100</strong><div class="hp-bar"><i id="caseHpBar"></i></div></div>
+          </aside>
+          <article class="panel case-panel">
+            <p id="caseBrief" class="case-brief"></p>
+            <div class="mini-head"><h3>証拠カード</h3><span id="evidenceCounter" class="muted">0/0</span></div>
+            <div id="evidenceGrid" class="evidence-grid"></div>
+            <div class="case-actions">
+              <button id="startJudgementBtn" class="primary-btn purple" type="button">判断パートへ</button>
+              <button id="autoOpenEvidenceBtn" class="secondary-btn" type="button">証拠を全部読む</button>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="caseBattleScreen" class="screen battle-screen">
+        <div class="battle-status">
+          <div><p id="caseBattleMode" class="eyebrow">判断パート</p><h2 id="caseBattleTitle">ケース設問</h2></div>
+          <div class="question-count"><span id="caseProgress">1/5</span></div>
+        </div>
+        <div class="room-banner boss" id="caseRoomBanner">事件解決</div>
+        <div class="hp-row single"><div class="hp-box"><div class="hp-label"><span>調査HP</span><span id="caseBattleHpText">100/100</span></div><div class="hp-bar"><i id="caseBattleHpBar"></i></div></div></div>
+        <div class="monster-stage case-stage">
+          <div class="monster-card boss-card"><img id="caseBattleImage" src="assets/monsters/audit_specter.png" alt="ボスモンスター" /><div id="caseDamagePop" class="damage-pop" aria-hidden="true"></div></div>
+          <div class="battle-side"><div class="battle-log" id="caseLog">証拠をもとに判断しよう。</div><div id="caseEvidenceMini" class="evidence-mini"></div></div>
+        </div>
+        <article class="question-card">
+          <div class="question-meta"><span id="caseQuestionCategory">セキュリティ</span><span id="caseQuestionType">原因推理</span><span id="caseBossBadge" class="rival-badge hidden">ボス</span></div>
+          <h3 id="caseQuestionText">問題文</h3>
+          <p id="caseQuestionContext" class="hint-text"></p>
+          <div id="caseChoices" class="choices"></div>
+        </article>
+      </section>
+
+      <section id="mockScreen" class="screen">
+        <div class="section-head"><button class="ghost-btn" data-action="home" type="button">← ホーム</button><div><p class="eyebrow">本番力チェック</p><h2>ミニ模擬試験</h2></div></div>
+        <section class="panel">
+          <h3>モード選択</h3>
+          <p class="muted">短時間で回せる午前ミニ模試と、午後問題風のケース模試を用意しました。</p>
+          <div class="mode-grid">
+            <button class="mode-card" data-mock="quick" type="button"><strong>午前ミニ模試</strong><span>15問 / 分野ランダム / 即時採点</span></button>
+            <button class="mode-card" data-mock="weak" type="button"><strong>弱点集中模試</strong><span>正答率が低い分野を優先 / 10問</span></button>
+            <button class="mode-card" data-mock="case" type="button"><strong>午後ミニ模試</strong><span>事件クエストから1本 / 調査なし</span></button>
+          </div>
+        </section>
+        <section class="panel">
+          <div class="mini-head"><h3>模試履歴</h3><span id="mockBest" class="pill">BEST 0%</span></div>
+          <div id="mockHistory" class="history-list"></div>
+        </section>
+      </section>
+
+      <section id="mockBattleScreen" class="screen battle-screen">
+        <div class="battle-status"><div><p id="mockMode" class="eyebrow">模擬試験</p><h2 id="mockTitle">午前ミニ模試</h2></div><div class="question-count"><span id="mockProgress">1/15</span></div></div>
+        <div class="room-banner mock">制限なし / 即時解説</div>
+        <div class="monster-stage">
+          <div class="monster-card"><img id="mockImage" src="assets/monsters/deadlock_golem.png" alt="模試モンスター" /><div id="mockDamagePop" class="damage-pop" aria-hidden="true"></div></div>
+          <div class="battle-side"><div class="battle-log" id="mockLog">模試開始。いつもの探索より少し本番寄りです。</div><div class="score-chip" id="mockScoreChip">0正解</div></div>
+        </div>
+        <article class="question-card"><div class="question-meta"><span id="mockCategory">分野</span><span id="mockDifficulty">難度</span></div><h3 id="mockQuestionText">問題文</h3><p id="mockHint" class="hint-text"></p><div id="mockChoices" class="choices"></div></article>
+      </section>
+
+      <section id="calendarScreen" class="screen">
+        <div class="section-head"><button class="ghost-btn" data-action="home" type="button">← ホーム</button><div><p class="eyebrow">継続管理</p><h2>学習カレンダー</h2></div></div>
+        <section class="panel calendar-panel">
+          <div class="mini-head"><h3 id="calendarTitle">今月</h3><span id="calendarSummary" class="pill">0日学習</span></div>
+          <div class="calendar-week labels"><span>日</span><span>月</span><span>火</span><span>水</span><span>木</span><span>金</span><span>土</span></div>
+          <div id="calendarGrid" class="calendar-grid"></div>
+        </section>
+        <section class="panel"><h3>今日の学習ログ</h3><p id="todayLog" class="muted"></p></section>
+      </section>
+
+      <section id="editorScreen" class="screen">
+        <div class="section-head"><button class="ghost-btn" data-action="home" type="button">← ホーム</button><div><p class="eyebrow">問題データ追加</p><h2>問題エディタ</h2></div></div>
+        <section class="panel">
+          <h3>オリジナル問題を追加</h3>
+          <p class="muted">IPA過去問をそのまま転載する場合は出典表記に注意。ここでは自作・改変問題を登録する想定です。</p>
+          <form id="questionForm" class="editor-form">
+            <label>分野<select id="editCategory"><option>セキュリティ</option><option>ネットワーク</option><option>データベース</option><option>アルゴリズム</option><option>プロジェクト管理</option><option>システム監査</option><option>経営戦略</option></select></label>
+            <label>問題文<textarea id="editQuestion" required placeholder="問題文を入力"></textarea></label>
+            <div class="choice-edit-grid">
+              <label>A<input id="editA" required /></label><label>B<input id="editB" required /></label><label>C<input id="editC" required /></label><label>D<input id="editD" required /></label>
+            </div>
+            <label>正解<select id="editAnswer"><option value="0">A</option><option value="1">B</option><option value="2">C</option><option value="3">D</option></select></label>
+            <label>解説<textarea id="editExplanation" required placeholder="なぜそれが正解か"></textarea></label>
+            <label>出典メモ<input id="editSource" placeholder="例：自作 / 令和○年度過去問を基に作成・一部改変" /></label>
+            <button class="primary-btn" type="submit">問題を保存</button>
+          </form>
+        </section>
+        <section class="panel"><div class="mini-head"><h3>追加済み問題</h3><button class="ghost-btn danger" id="clearCustomBtn" type="button">全削除</button></div><div id="customQuestionList" class="custom-list"></div></section>
+      </section>
+
+      <section id="analyticsScreen" class="screen">
+        <div class="section-head"><button class="ghost-btn" data-action="home" type="button">← ホーム</button><div><p class="eyebrow">分析</p><h2>成績・合格可能性</h2></div></div>
+        <section class="panel pass-panel">
+          <div class="pass-score"><span>合格可能性</span><strong id="passScoreBig">0%</strong></div>
+          <div class="meter big"><i id="passMeter"></i></div>
+          <p id="passComment" class="muted"></p>
+        </section>
+        <section class="panel"><h3>分野別レーダー風メーター</h3><div id="categoryStats" class="category-stats"></div></section>
+        <section class="panel"><h3>称号</h3><div id="allTitles" class="title-grid"></div></section>
+        <section class="panel"><h3>因縁モンスター</h3><p id="wrongListText" class="muted"></p><button id="reviewFromStatsBtn" class="secondary-btn" type="button">再戦する</button></section>
+        <section class="panel"><h3>データ操作</h3><button id="resetBtn" class="ghost-btn danger" type="button">成績をリセット</button></section>
+      </section>
+
+      <section id="resultScreen" class="screen">
+        <div class="result-card">
+          <p class="badge" id="resultBadge">探索結果</p>
+          <h2 id="resultTitle">クリア！</h2>
+          <p id="resultMessage">おつかれさま！</p>
+          <div class="result-stats">
+            <div><span>正答</span><strong id="resultCorrect">0/0</strong></div>
+            <div><span id="resultMiddleLabel">到達</span><strong id="resultFloor">1F</strong></div>
+            <div><span>EXP</span><strong id="resultExp">0</strong></div>
+          </div>
+          <div id="resultExtra" class="result-extra"></div>
+          <div class="primary-actions"><button class="primary-btn" id="retryBtn" type="button">もう一度</button><button class="secondary-btn" data-action="home" type="button">ホームへ</button></div>
+        </div>
+      </section>
+    </main>
+
+    <nav class="bottom-nav">
+      <button class="active" data-nav="homeScreen" type="button">🏠<span>ホーム</span></button>
+      <button data-nav="dungeonScreen" type="button">⚔️<span>探索</span></button>
+      <button data-nav="mockScreen" type="button">📝<span>模試</span></button>
+      <button data-nav="calendarScreen" type="button">📅<span>記録</span></button>
+      <button data-nav="analyticsScreen" type="button">📊<span>分析</span></button>
+    </nav>
+  </div>
+
+  <div id="explainModal" class="modal" aria-hidden="true">
+    <div class="modal-card">
+      <p id="explainJudge" class="badge">正解！</p>
+      <h3 id="explainTitle">解説</h3>
+      <p id="explainBody"></p>
+      <p id="sourceNote" class="source-note"></p>
+      <button id="nextBtn" class="primary-btn" type="button">次へ</button>
+    </div>
+  </div>
+
+  <div id="eventModal" class="modal" aria-hidden="true">
+    <div class="modal-card">
+      <p id="eventBadge" class="badge">イベント</p>
+      <h3 id="eventTitle">イベント</h3>
+      <p id="eventBody"></p>
+      <button id="eventNextBtn" class="primary-btn" type="button">進む</button>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
