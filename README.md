@@ -55,3 +55,21 @@ ap_rogue_v4/
       audit_specter.png
       critical_path_worm.png
 ```
+
+
+## v4 imagefix について
+
+一部のスマホ環境やZIP内プレビューでは、`assets/monsters/*.png` の相対パス画像が読み込めないことがあります。  
+この imagefix 版では、ゲーム内で使うモンスター画像を `data:image/png;base64` としてHTML/JSへ埋め込んでいるため、`index.html` 単体でも画像が表示されやすくなっています。
+
+通常はこのフォルダの `index.html` を開けば動きます。GitHub Pagesなどに置く場合もそのままアップロードできます。
+
+
+- 2026-05 mobile layout update: battle / case battle / mock battle screens were compacted to fit on one screen more easily on iPhone-size displays.
+
+
+## v4 expanded
+
+- 内蔵の通常4択問題を105問追加しました。
+- 通常問題は合計129問、午後事件クエスト内の設問12問を含めると合計141問です。
+- 追加問題はIPA公開過去問題の頻出テーマを参考にしたオリジナル問題で、公式問題の転載ではありません。

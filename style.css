@@ -172,3 +172,50 @@ textarea { min-height: 90px; resize: vertical; }
   .category-row { grid-template-columns: 94px 1fr 44px; }
   .day-cell { min-height: 60px; padding: 6px; }
 }
+
+
+/* ===== Compact battle layout for small mobile screens ===== */
+body.combat-mode .topbar { display: none; }
+body.combat-mode .app { padding-top: 8px; }
+body.combat-mode .bottom-nav { width: min(680px, calc(100% - 16px)); bottom: max(6px, env(safe-area-inset-bottom)); padding: 6px; gap: 4px; }
+body.combat-mode .bottom-nav button { padding: 6px 3px; }
+body.combat-mode .bottom-nav button span { font-size: 10px; margin-top: 1px; }
+
+@media (max-width: 760px) {
+  .battle-screen .battle-status { margin: 2px 0 8px; align-items: center; }
+  .battle-screen .battle-status h2 { font-size: clamp(16px, 5.6vw, 28px); line-height: 1.15; }
+  .battle-screen .eyebrow { font-size: 11px; margin-bottom: 2px; }
+  .battle-screen .question-count { padding: 8px 11px; border-radius: 13px; font-size: 13px; }
+  .battle-screen .room-banner { padding: 9px 13px; margin-bottom: 8px; border-radius: 16px; font-size: 14px; }
+  .battle-screen .hp-row { grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+  .battle-screen .hp-box { padding: 10px; border-radius: 16px; }
+  .battle-screen .hp-label { font-size: 11px; margin-bottom: 6px; }
+  .battle-screen .hp-bar, .battle-screen .meter { height: 10px; }
+  .battle-screen .monster-stage { grid-template-columns: 118px minmax(0, 1fr); gap: 10px; align-items: stretch; margin-bottom: 10px; }
+  .battle-screen .monster-card { min-height: 138px; padding: 8px; border-radius: 22px; }
+  .battle-screen .monster-card img { max-width: 100%; max-height: 118px; }
+  .battle-screen .damage-pop { top: 12px; right: 14px; font-size: 24px; }
+  .battle-screen .battle-side { gap: 8px; min-width: 0; }
+  .battle-screen .battle-log { min-height: 82px; padding: 12px; border-radius: 16px; line-height: 1.45; font-size: 14px; }
+  .battle-screen .battle-cards, .battle-screen .active-cards { gap: 6px; }
+  .battle-screen .active-card, .battle-screen .score-chip, .battle-screen .title-badge { padding: 6px 8px; font-size: 11px; }
+  .battle-screen .question-card { padding: 14px; border-radius: 20px; }
+  .battle-screen .question-meta { gap: 6px; margin-bottom: 8px; }
+  .battle-screen .question-meta span { padding: 4px 8px; font-size: 11px; }
+  .battle-screen .question-card h3 { font-size: 17px; line-height: 1.4; margin-bottom: 8px; }
+  .battle-screen .hint-text { font-size: 13px; line-height: 1.45; margin-bottom: 8px; }
+  .battle-screen .choices { gap: 8px; margin-top: 10px; }
+  .battle-screen .choice-btn { padding: 11px 12px; border-radius: 14px; font-size: 14px; line-height: 1.35; }
+}
+
+@media (max-width: 760px) and (max-height: 900px) {
+  body.combat-mode .app { padding-top: 6px; padding-bottom: 74px; }
+  .battle-screen .monster-stage { grid-template-columns: 104px minmax(0, 1fr); gap: 8px; margin-bottom: 8px; }
+  .battle-screen .monster-card { min-height: 122px; }
+  .battle-screen .monster-card img { max-height: 104px; }
+  .battle-screen .battle-log { min-height: 72px; padding: 10px; font-size: 13px; }
+  .battle-screen .question-card { padding: 12px; }
+  .battle-screen .question-card h3 { font-size: 16px; line-height: 1.35; }
+  .battle-screen .hint-text { font-size: 12px; }
+  .battle-screen .choice-btn { padding: 10px 11px; font-size: 13px; }
+}
